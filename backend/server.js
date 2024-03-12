@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const userAuthRouter = require("./routes/userAuthRotes");
+const helmet = require("helmet");
 
 const app = express();
 
@@ -14,13 +15,23 @@ app.use(
   })
 );
 
+// Use helmet to set Content Security Policy
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'none'"],
+      imgSrc: ["'self'", "data:"], // Allow loading images from 'self' and 'data:' scheme
+    },
+  })
+);
+
 app.use(express.json());
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/mern")
   .then((result) => {
     console.log("Db is Connected");
-    app.listen(3000, () => {
+    app.listen(3001, () => {
       console.log("server is running");
     });
   })
@@ -29,4 +40,4 @@ mongoose
   });
 
 //   routes
-app.use(userAuthRouter);
+// app.use(userAuthRouter);
